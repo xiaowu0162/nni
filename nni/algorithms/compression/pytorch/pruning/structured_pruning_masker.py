@@ -452,9 +452,6 @@ class FPGMPrunerMasker(StructuredWeightMasker):
         out_idx: int
             output channel index of specified filter, this method calculates the total distance
             between this specified filter and all other filters.
-        distance_type: str
-            The type of distance used for median calculation. Currently supports 'l1', 'l2', and 
-            'cosine'. Check section 4.4 of the original paper for more details. 
         Returns
         -------
         float32
