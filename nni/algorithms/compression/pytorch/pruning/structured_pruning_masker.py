@@ -408,6 +408,21 @@ class FPGMPrunerMasker(StructuredWeightMasker):
     https://arxiv.org/pdf/1811.00250.pdf
     """
 
+    def __init__(self, *args, **kwargs):
+        super(FPGMPrunerMasker, self).__init__(*args, **kwargs)
+        # determine distance type
+        self.distance_type = None
+        for cfg in self.pruner.config_list:
+            if 'distance_type' in cfg:
+                if self.distance_type is None:
+                    self.distance_type = cfg['distance_type']
+                elif cfg['distance_type'] != self.distance_type:
+                    raise RuntimeError('All configs must use the same distance type')        
+        if self.distance_type is None:
+           self.distance_type = 'l2' 
+        if self.distance_type not in ['l2', 'l1', 'cosine']:
+            raise RuntimeError('Unsupported distance type')
+        
     def get_mask(self, base_mask, weight, num_prune, wrapper, wrapper_idx, channel_masks=None):
         min_gm_idx = self._get_min_gm_kernel_idx(
             num_prune, wrapper, wrapper_idx, channel_masks)
@@ -437,6 +452,9 @@ class FPGMPrunerMasker(StructuredWeightMasker):
         out_idx: int
             output channel index of specified filter, this method calculates the total distance
             between this specified filter and all other filters.
+        distance_type: str
+            The type of distance used for median calculation. Currently supports 'l1', 'l2', and 
+            'cosine'. Check section 4.4 of the original paper for more details. 
         Returns
         -------
         float32
@@ -444,13 +462,29 @@ class FPGMPrunerMasker(StructuredWeightMasker):
         """
         logger.debug('weight size: %s', weight.size())
         assert len(weight.size()) in [3, 4], 'unsupported weight shape'
-
+        
         w = weight.view(weight.size(0), -1)
         anchor_w = w[out_idx].unsqueeze(0).expand(w.size(0), w.size(1))
-        x = w - anchor_w
-        x = (x * x).sum(-1)
-        x = torch.sqrt(x)
-        return x.sum()
+
+        if self.distance_type == 'l2':
+            x = w - anchor_w
+            x = (x * x).sum(-1)
+            x = torch.sqrt(x)
+            return x.sum()
+
+        elif self.distance_type == 'l1':
+            x = w - anchor_w
+            x = torch.abs(x)
+            return x.sum() 
+
+        elif self.distance_type == 'cosine':
+            # TODO: check whether absolute value should be used here 
+            x = torch.nn.functional.cosine_similarity(w, anchor_w, dim=1)
+            x = torch.abs(x) 
+            return x.sum() 
+        
+        else:
+            return None
 
     def get_channel_sum(self, wrapper, wrapper_idx):
         weight = wrapper.module.weight.data
