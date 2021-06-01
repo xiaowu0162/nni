@@ -163,7 +163,7 @@ class FPGMPruner(OneshotPruner):
 
     def __init__(self, model, config_list, dependency_aware=False, dummy_input=None):
         super().__init__(model, config_list, pruning_algorithm='fpgm', dependency_aware=dependency_aware,
-                         dummy_input=dummy_input)
+                         dummy_input=dummy_input, distance_type='l2')
 
     def _supported_dependency_aware(self):
         return True

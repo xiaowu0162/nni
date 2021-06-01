@@ -412,16 +412,10 @@ class FPGMPrunerMasker(StructuredWeightMasker):
         super(FPGMPrunerMasker, self).__init__(*args, **kwargs)
         # determine distance type
         self.distance_type = None
-        for cfg in self.pruner.config_list:
-            if 'distance_type' in cfg:
-                if self.distance_type is None:
-                    self.distance_type = cfg['distance_type']
-                elif cfg['distance_type'] != self.distance_type:
-                    raise RuntimeError('All configs must use the same distance type')        
-        if self.distance_type is None:
-           self.distance_type = 'l2' 
+        if 'distance_type' in kwargs:
+            self.distance_type = kwargs['distance_type']
         if self.distance_type not in ['l2', 'l1', 'cosine']:
-            raise RuntimeError('Unsupported distance type')
+            raise RuntimeError('Unsupported distance type {}'.format(self.distance_type))
         
     def get_mask(self, base_mask, weight, num_prune, wrapper, wrapper_idx, channel_masks=None):
         min_gm_idx = self._get_min_gm_kernel_idx(
