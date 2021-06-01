@@ -461,21 +461,19 @@ class FPGMPrunerMasker(StructuredWeightMasker):
             x = w - anchor_w
             x = (x * x).sum(-1)
             x = torch.sqrt(x)
-            return x.sum()
-
+            
         elif self.distance_type == 'l1':
             x = w - anchor_w
-            x = torch.abs(x)
-            return x.sum() 
-
+            x = torch.abs(x).sum(-1)
+            
         elif self.distance_type == 'cosine':
-            # TODO: check whether absolute value should be used here 
             x = torch.nn.functional.cosine_similarity(w, anchor_w, dim=1)
-            x = torch.abs(x) 
-            return x.sum() 
-        
+            x = torch.ones_like(x) - x
+                    
         else:
             return None
+
+        return x.sum()
 
     def get_channel_sum(self, wrapper, wrapper_idx):
         weight = wrapper.module.weight.data
