@@ -470,6 +470,7 @@ class FPGMPrunerMasker(StructuredWeightMasker):
         else:
             return None
 
+        # sum up the distances to each of the other filters as final score
         return x.sum()
 
     def get_channel_sum(self, wrapper, wrapper_idx):
