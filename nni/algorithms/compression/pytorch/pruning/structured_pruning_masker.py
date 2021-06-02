@@ -408,12 +408,9 @@ class FPGMPrunerMasker(StructuredWeightMasker):
     https://arxiv.org/pdf/1811.00250.pdf
     """
 
-    def __init__(self, *args, **kwargs):
-        super(FPGMPrunerMasker, self).__init__(*args, **kwargs)
-        # determine distance type
-        self.distance_type = None
-        if 'distance_type' in kwargs:
-            self.distance_type = kwargs['distance_type']
+    def __init__(self, model, pruner, distance_type='l2'):
+        super().__init__(model, pruner)
+        self.distance_type = distance_type
         if self.distance_type not in ['l2', 'l1', 'cosine']:
             raise RuntimeError('Unsupported distance type {}'.format(self.distance_type))
         
