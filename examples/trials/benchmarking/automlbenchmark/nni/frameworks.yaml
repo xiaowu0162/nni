@@ -10,6 +10,14 @@ NNI:
 # limit_type in ['time', 'ntrials']
 # limit must be an integer
 
+BlendSearch:
+  extends: NNI
+  params:
+    tuner_type: 'BlendSearch'
+    arch_type: 'random_forest'
+    limit_type: 'ntrials'
+    trial_limit: 10
+
 TPE:
   extends: NNI
   params:

@@ -11,6 +11,8 @@ from nni.utils import MetricType
 from nni.tuner import Tuner
 from nni.runtime.msg_dispatcher_base import MsgDispatcherBase
 
+from flaml.searcher.blendsearch import BlendSearchTuner
+
 from amlb.benchmark import TaskConfig
 
 
@@ -30,7 +32,10 @@ def get_tuner_class_dict():
 
 def get_tuner(config: TaskConfig):
     name2tuner = get_tuner_class_dict()
-    if config.framework_params['tuner_type'] not in name2tuner:
+    if config.framework_params['tuner_type'] == 'BlendSearch':
+        tuner_type = BlendSearchTuner
+        tuner = tuner_type(mode='max')
+    elif config.framework_params['tuner_type'] not in name2tuner:
         raise RuntimeError('The requested tuner type is unavailable.')
     else:
         module_name = name2tuner[config.framework_params['tuner_type']]
@@ -64,9 +69,9 @@ def get_tuner(config: TaskConfig):
         else:
             tuner = tuner_type()
 
-        assert(tuner is not None)
+    assert(tuner is not None)
 
-        return tuner, config.framework_params['tuner_type']
+    return tuner, config.framework_params['tuner_type']
 
     
 class NNITuner:
