@@ -16,7 +16,7 @@ BlendSearch:
     tuner_type: 'BlendSearch'
     arch_type: 'random_forest'
     limit_type: 'ntrials'
-    trial_limit: 10
+    trial_limit: 100
 
 TPE:
   extends: NNI

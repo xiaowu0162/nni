@@ -3,7 +3,7 @@
 time=$(date "+%Y%m%d%H%M%S")
 installation='automlbenchmark'
 outdir="results_$time"
-benchmark='nnivalid'      # 'nnismall'  
+benchmark='nnismall'      # 'nnivalid'  
 serialize=$true           # if false, run all experiments together in background
 
 mkdir $outdir $outdir/scorelogs $outdir/reports 
