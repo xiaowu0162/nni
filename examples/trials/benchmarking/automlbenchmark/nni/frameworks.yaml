@@ -15,16 +15,16 @@ BlendSearch:
   params:
     tuner_type: 'BlendSearch'
     arch_type: 'random_forest'
-    limit_type: 'ntrials'
-    trial_limit: 100
+    limit_type: 'time'
+    #trial_limit: 20
 
 TPE:
   extends: NNI
   params:
     tuner_type: 'TPE'
     arch_type: 'random_forest'
-    limit_type: 'ntrials'
-    trial_limit: 10
+    limit_type: 'time'
+    #trial_limit: 20
 
 Random:
   extends: NNI 

@@ -34,7 +34,12 @@ def get_tuner(config: TaskConfig):
     name2tuner = get_tuner_class_dict()
     if config.framework_params['tuner_type'] == 'BlendSearch':
         tuner_type = BlendSearchTuner
-        tuner = tuner_type(mode='max')
+        low_cost_partial_config = { "n_estimators": 8,
+                                    "max_depth": 64,
+                                    "min_samples_leaf": 4,
+                                    "min_samples_split": 4,
+                                    "max_leaf_nodes": 8 }
+        tuner = tuner_type(mode='max', low_cost_partial_config=low_cost_partial_config)
     elif config.framework_params['tuner_type'] not in name2tuner:
         raise RuntimeError('The requested tuner type is unavailable.')
     else:

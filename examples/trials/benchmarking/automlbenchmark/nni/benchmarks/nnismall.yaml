@@ -2,7 +2,7 @@
 - name: __defaults__
   folds: 2
   cores: 2
-  max_runtime_seconds: 300
+  max_runtime_seconds: 12000
   
 - name: cholesterol
   openml_task_id: 2295
