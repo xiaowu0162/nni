@@ -40,6 +40,7 @@ def get_tuner(config: TaskConfig):
                                     "min_samples_split": 4,
                                     "max_leaf_nodes": 8 }
         tuner = tuner_type(mode='max', low_cost_partial_config=low_cost_partial_config)
+        tuner.set_search_properties(config={"time_budget_s": 12000})
     elif config.framework_params['tuner_type'] not in name2tuner:
         raise RuntimeError('The requested tuner type is unavailable.')
     else:
