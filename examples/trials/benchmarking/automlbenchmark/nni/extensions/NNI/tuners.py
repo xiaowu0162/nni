@@ -11,7 +11,7 @@ from nni.utils import MetricType
 from nni.tuner import Tuner
 from nni.runtime.msg_dispatcher_base import MsgDispatcherBase
 
-from flaml.searcher.blendsearch import BlendSearchTuner
+from flaml.searcher.blendsearch import BlendSearchTuner, CFO
 
 from amlb.benchmark import TaskConfig
 
@@ -32,8 +32,19 @@ def get_tuner_class_dict():
 
 def get_tuner(config: TaskConfig):
     name2tuner = get_tuner_class_dict()
+    # hacks to execute BlendSearch normally
     if config.framework_params['tuner_type'] == 'BlendSearch':
         tuner_type = BlendSearchTuner
+        low_cost_partial_config = { "n_estimators": 8,
+                                    "max_depth": 64,
+                                    "min_samples_leaf": 4,
+                                    "min_samples_split": 4,
+                                    "max_leaf_nodes": 8 }
+        tuner = tuner_type(mode='max', low_cost_partial_config=low_cost_partial_config)
+        tuner.set_search_properties(config={"time_budget_s": 12000})
+    # hacks to execute CFO normally
+    elif config.framework_params['tuner_type'] == 'CFO':
+        tuner_type = CFO
         low_cost_partial_config = { "n_estimators": 8,
                                     "max_depth": 64,
                                     "min_samples_leaf": 4,

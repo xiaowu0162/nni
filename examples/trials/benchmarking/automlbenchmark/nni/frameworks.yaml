@@ -18,6 +18,14 @@ BlendSearch:
     limit_type: 'time'
     #trial_limit: 20
 
+CFO:
+  extends: NNI
+  params:
+    tuner_type: 'BlendSearch'
+    arch_type: 'random_forest'
+    limit_type: 'time'
+    #trial_limit: 20
+
 TPE:
   extends: NNI
   params:
